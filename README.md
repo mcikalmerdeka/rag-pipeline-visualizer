@@ -2,7 +2,7 @@
 
 An interactive tool to visualize the complete **naive RAG process** from start to finish. This project breaks down the entire RAG (Retrieval-Augmented Generation) pipeline into three transparent sections: **Indexing & Retrieval → Augmentation → Generation**. Built with Streamlit, ChromaDB, Sentence Transformers, and OpenAI.
 
-🚀 **[Try it live here!](https://rag-pipeline-visualizer.streamlit.app/)** - Deployed on Streamlit Cloud for direct testing.
+🚀 **Try it live here: [Streamlit Cloud](https://rag-pipeline-visualizer-3qng3jzjaatt7fyccnshzy.streamlit.app/)**
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/mcikalmerdeka/rag-pipeline-visualizer/main/assets/Clearest%20RAG%20Diagram.jpg" alt="RAG Pipeline Diagram" width="500"/>
