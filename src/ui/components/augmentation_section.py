@@ -1,6 +1,7 @@
 """Augmentation section component - shows prompt construction"""
 
 import streamlit as st
+from src.config import DEFAULT_SYSTEM_PROMPT
 
 
 def render_augmentation_section():
@@ -18,10 +19,8 @@ def render_augmentation_section():
     st.subheader("📋 System Prompt")
     st.markdown("*This instructs the LLM on how to behave and use the context*")
     
-    # Allow custom system prompt
-    default_system_prompt = """You are a helpful AI assistant. Use the provided context to answer the user's question accurately and comprehensively. 
-If the context doesn't contain relevant information, acknowledge this and provide the best answer you can based on your knowledge.
-Always cite which parts of the context you used in your answer."""
+    # Allow custom system prompt (default from settings)
+    default_system_prompt = DEFAULT_SYSTEM_PROMPT.strip()
     
     if 'custom_system_prompt' not in st.session_state:
         st.session_state.custom_system_prompt = default_system_prompt

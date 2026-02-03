@@ -18,7 +18,7 @@ def render_sidebar():
         selected_model = st.selectbox(
             "Embedding Model",
             options=list(MODEL_OPTIONS.keys()),
-            help="Choose the sentence transformer model for embeddings"
+            help="Local (MiniLM) or OpenAI cloud embeddings"
         )
         
         model_name = MODEL_OPTIONS[selected_model]

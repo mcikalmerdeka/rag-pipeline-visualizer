@@ -3,18 +3,17 @@
 import os
 from pathlib import Path
 
-# Model options
+# Embedding model options (only 2: local fast vs cloud)
 MODEL_OPTIONS = {
     "all-MiniLM-L6-v2 (Fast)": "sentence-transformers/all-MiniLM-L6-v2",
-    "all-mpnet-base-v2 (Accurate)": "sentence-transformers/all-mpnet-base-v2",
-    "paraphrase-multilingual (Multilingual)": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    "OpenAI text-embedding-3-small (Cloud)": "openai:text-embedding-3-small",
 }
 
 # Get the project root directory (assuming settings.py is in src/config/)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 
-
+# Load sample text from data directory
 def load_sample_text(filename: str) -> str:
     """Load sample text from data directory
     
@@ -43,10 +42,18 @@ SAMPLE_TEXTS = {
     "LangGraph Framework": load_sample_text("LangGraph_Overview.txt")
 }
 
-# Default values
+# Default values for the RAG pipeline
 DEFAULT_CHUNK_SIZE = 100
 DEFAULT_OVERLAP = 20
 DEFAULT_COLLECTION_NAME = "rag_embeddings"
 DEFAULT_N_RESULTS = 3
 DEFAULT_REDUCTION_METHOD = "PCA"
 
+# LLM related defaults
+DEFAULT_MODEL = "gpt-4.1-nano"
+DEFAULT_TEMPERATURE = 0.2
+DEFAULT_SYSTEM_PROMPT = """
+You are a helpful assistant that can answer questions about the provided text.
+You are given a question and a context.
+You need to answer the question based on the context.
+"""

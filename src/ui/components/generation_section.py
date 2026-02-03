@@ -1,7 +1,8 @@
 """Generation section component - shows LLM response"""
 
 import streamlit as st
-from src.core.llm import generate_response, get_openai_client
+from src.config import DEFAULT_MODEL
+from src.core.llm import generate_response, validate_api_key
 
 
 def render_generation_section():
@@ -20,7 +21,7 @@ def render_generation_section():
     with col1:
         st.metric("Contexts Used", st.session_state.augmented_prompt['num_contexts'])
     with col2:
-        st.metric("Model", "gpt-4o-mini")
+        st.metric("Model", DEFAULT_MODEL)
     
     st.divider()
     
@@ -45,7 +46,7 @@ def render_generation_section():
     if generate_button:
         # Check API key
         try:
-            get_openai_client()
+            validate_api_key()
         except ValueError as e:
             st.error("❌ OPENAI_API_KEY not found. Please configure it:")
             st.markdown("**For local development:** Add to `.env` file:")
@@ -56,19 +57,19 @@ def render_generation_section():
         
         st.session_state.generating = True
         
-        with st.spinner("🧠 Generating response from GPT-4o-mini..."):
+        with st.spinner(f"🧠 Generating response from {DEFAULT_MODEL}..."):
             try:
                 # Get retrieved documents
                 retrieved_docs = st.session_state.query_results['documents'][0]
                 query = st.session_state.augmented_prompt['query']
                 system_prompt = st.session_state.augmented_prompt['system_prompt']
                 
-                # Generate response
+                # Generate response (uses DEFAULT_MODEL / DEFAULT_TEMPERATURE from config when not overridden)
                 result = generate_response(
                     query=query,
                     retrieved_chunks=retrieved_docs,
                     system_prompt=system_prompt,
-                    model="gpt-4o-mini"
+                    model=DEFAULT_MODEL
                 )
                 
                 st.session_state.llm_response = result
@@ -103,11 +104,11 @@ def render_generation_section():
         with col3:
             st.metric("Total Tokens", f"{usage['total_tokens']:,}")
         with col4:
-            # Rough cost estimate for gpt-4o-mini
-            cost = (usage['prompt_tokens'] * 0.150 / 1_000_000) + (usage['completion_tokens'] * 0.600 / 1_000_000)
+            # Rough cost estimate for gpt-4.1-nano
+            cost = (usage['prompt_tokens'] * 0.10 / 1_000_000) + (usage['completion_tokens'] * 0.40 / 1_000_000)
             st.metric("Est. Cost", f"${cost:.6f}")
         
-        st.caption("💰 Cost based on GPT-4o-mini pricing: $0.150/1M input tokens, $0.600/1M output tokens")
+        st.caption(f"💰 Cost based on gpt-4.1-nano pricing: $0.10 per 1M prompt tokens, $0.40 per 1M completion tokens")
         
         # Show full conversation for debugging/inspection
         with st.expander("🔍 View Full API Call Details"):

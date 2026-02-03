@@ -1,30 +1,68 @@
-"""LLM integration for RAG generation"""
+"""LLM integration for RAG generation using LangChain OpenAI"""
 
 import os
 import streamlit as st
-from openai import OpenAI
-from typing import List, Dict
+from typing import List, Dict, Optional
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage
+
+from src.config import DEFAULT_MODEL, DEFAULT_TEMPERATURE, DEFAULT_SYSTEM_PROMPT
 
 # Load environment variables (for local development)
 load_dotenv()
 
 
-def get_openai_client():
-    """Get OpenAI client instance
+def get_api_key() -> Optional[str]:
+    """Get OpenAI API key from environment or Streamlit secrets
     
     Supports both local .env files and Streamlit Cloud secrets
+    
+    Returns:
+        API key if found, None otherwise
     """
     # Try Streamlit secrets first (for cloud deployment)
     try:
-        api_key = st.secrets["OPENAI_API_KEY"]
+        return st.secrets["OPENAI_API_KEY"]
     except (KeyError, FileNotFoundError):
         # Fall back to environment variable (for local .env)
-        api_key = os.getenv("OPENAI_API_KEY")
+        return os.getenv("OPENAI_API_KEY")
+
+
+def validate_api_key() -> None:
+    """Validate that OpenAI API key is configured
     
+    Raises:
+        ValueError: If OPENAI_API_KEY is not found
+    """
+    if not get_api_key():
+        raise ValueError("OPENAI_API_KEY not found in environment variables or Streamlit secrets")
+
+
+def get_llm(model: str = None, temperature: float = None) -> ChatOpenAI:
+    """Get LangChain ChatOpenAI instance
+    
+    Args:
+        model: OpenAI model to use
+        temperature: Temperature for generation
+        
+    Returns:
+        Configured ChatOpenAI instance
+    """
+    if model is None:
+        model = DEFAULT_MODEL
+    if temperature is None:
+        temperature = DEFAULT_TEMPERATURE
+    api_key = get_api_key()
     if not api_key:
         raise ValueError("OPENAI_API_KEY not found in environment variables or Streamlit secrets")
-    return OpenAI(api_key=api_key)
+    
+    return ChatOpenAI(
+        model=model,
+        temperature=temperature,
+        api_key=api_key,
+        max_tokens=1000
+    )
 
 
 def construct_rag_prompt(query: str, retrieved_chunks: List[str], system_prompt: str = None) -> Dict[str, any]:
@@ -39,9 +77,7 @@ def construct_rag_prompt(query: str, retrieved_chunks: List[str], system_prompt:
         Dictionary with system_prompt, context, user_query, and full_prompt
     """
     if system_prompt is None:
-        system_prompt = """You are a helpful AI assistant. Use the provided context to answer the user's question accurately and comprehensively. 
-If the context doesn't contain relevant information, acknowledge this and provide the best answer you can based on your knowledge.
-Always cite which parts of the context you used in your answer."""
+        system_prompt = DEFAULT_SYSTEM_PROMPT.strip()
     
     # Format retrieved context
     context_text = "\n\n".join([
@@ -68,8 +104,8 @@ Please answer the question based on the context provided above."""
     }
 
 
-def generate_response(query: str, retrieved_chunks: List[str], system_prompt: str = None, model: str = "gpt-4o-mini") -> Dict[str, any]:
-    """Generate response using OpenAI with retrieved context
+def generate_response(query: str, retrieved_chunks: List[str], system_prompt: str = None, model: str = None) -> Dict[str, any]:
+    """Generate response using LangChain OpenAI with retrieved context
     
     Args:
         query: User query
@@ -80,30 +116,33 @@ def generate_response(query: str, retrieved_chunks: List[str], system_prompt: st
     Returns:
         Dictionary with prompt_data and response
     """
-    client = get_openai_client()
+    if model is None:
+        model = DEFAULT_MODEL
+    llm = get_llm(model=model, temperature=DEFAULT_TEMPERATURE)
     
     # Construct augmented prompt
     prompt_data = construct_rag_prompt(query, retrieved_chunks, system_prompt)
     
-    # Call OpenAI API
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": prompt_data["system_prompt"]},
-            {"role": "user", "content": prompt_data["full_user_message"]}
-        ],
-        temperature=0.7,
-        max_tokens=1000
-    )
+    # Create LangChain messages
+    messages = [
+        SystemMessage(content=prompt_data["system_prompt"]),
+        HumanMessage(content=prompt_data["full_user_message"])
+    ]
+    
+    # Call LangChain OpenAI
+    response = llm.invoke(messages)
+    
+    # Extract usage information from response metadata
+    usage_metadata = response.response_metadata.get('token_usage', {})
     
     return {
         "prompt_data": prompt_data,
-        "response": response.choices[0].message.content,
+        "response": response.content,
         "model": model,
         "usage": {
-            "prompt_tokens": response.usage.prompt_tokens,
-            "completion_tokens": response.usage.completion_tokens,
-            "total_tokens": response.usage.total_tokens
+            "prompt_tokens": usage_metadata.get('prompt_tokens', 0),
+            "completion_tokens": usage_metadata.get('completion_tokens', 0),
+            "total_tokens": usage_metadata.get('total_tokens', 0)
         }
     }
 
