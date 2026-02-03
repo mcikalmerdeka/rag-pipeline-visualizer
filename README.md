@@ -1,20 +1,20 @@
 # 🔍 RAG Pipeline Visualizer
 
-An interactive tool to visualize the complete **naive RAG process** from start to finish. This project breaks down the entire RAG (Retrieval-Augmented Generation) pipeline into three transparent sections: **Retrieval → Augmentation → Generation**. Built with Streamlit, ChromaDB, Sentence Transformers, and OpenAI.
+An interactive tool to visualize the complete **naive RAG process** from start to finish. This project breaks down the entire RAG (Retrieval-Augmented Generation) pipeline into three transparent sections: **Indexing & Retrieval → Augmentation → Generation**. Built with Streamlit, ChromaDB, Sentence Transformers, and OpenAI.
 
 🚀 **[Try it live here!](https://rag-pipeline-visualizer.streamlit.app/)** - Deployed on Streamlit Cloud for direct testing.
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/mcikalmerdeka/nlp-learning/refs/heads/main/rag-pipeline-visualizer/assets/Clearest%20RAG%20Diagram.jpg" alt="RAG Pipeline Diagram" width="500"/>
+  <img src="https://raw.githubusercontent.com/mcikalmerdeka/rag-pipeline-visualizer/main/assets/Clearest%20RAG%20Diagram.jpg" alt="RAG Pipeline Diagram" width="500"/>
 </div>
 
 ## 🌟 Features
 
-### 🔎 Section 1: Retrieval
+### 🔎 Section 1: Indexing & Retrieval
 
 - **Text Processing**: Upload files or paste content directly
 - **Smart Chunking**: Configurable chunk size and overlap
-- **Multiple Models**: Choose from various sentence transformer models
+- **Embedding Models**: Choose **all-MiniLM-L6-v2** (fast, local) or **OpenAI text-embedding-3-small** (cloud)
 - **ChromaDB Integration**: Real vector database storage
 - **Enhanced Visualizations**: 🌟 **NEW!** Three visualization modes:
   - **3D Scatter Plot**: Interactive 3D embedding space
@@ -41,13 +41,34 @@ An interactive tool to visualize the complete **naive RAG process** from start t
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### 1. Clone the Repository
 
 ```bash
-pip uv pip install -r requirements.txt
+git clone https://github.com/mcikalmerdeka/rag-pipeline-visualizer.git
+cd rag-pipeline-visualizer
 ```
 
-### 2. Configure OpenAI API Key
+### 2. Install Dependencies
+
+**Option A – pip**
+
+```bash
+pip install -r requirements.txt
+```
+
+**Option B – uv**
+
+```bash
+uv sync
+```
+
+Or install from `requirements.txt` explicitly:
+
+```bash
+uv add -r requirements.txt
+```
+
+### 3. Configure OpenAI API Key
 
 Create a `.env` file in the project root:
 
@@ -57,7 +78,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 Get your API key from [OpenAI Platform](https://platform.openai.com/api-keys).
 
-### 3. Run the App
+### 4. Run the App
 
 ```bash
 streamlit run app.py
@@ -65,12 +86,12 @@ streamlit run app.py
 
 The app opens at `http://localhost:8501`
 
-> **Note**: First run downloads the embedding model (~80-400MB)
+> **Note**: First run may download the embedding model (~80MB for all-MiniLM-L6-v2). Using OpenAI embeddings skips local download but requires an API key.
 
-### 4. Try It Out
+### 5. Try It Out
 
-1. Click "Load Sample" in sidebar → Choose "AI & Machine Learning"
-2. Click "Generate Embeddings" (wait ~10 seconds)
+1. In **Indexing & Retrieval**: Click "Load Sample" in sidebar → Choose "AI & Machine Learning"
+2. Click "Generate Embeddings" (wait ~10 seconds for local model, or use OpenAI for cloud embeddings)
 3. **Explore Visualizations**: Try different visualization modes to see semantic relationships
 4. Enter query: "What is deep learning?"
 5. Click "Search Similar Chunks"
@@ -82,15 +103,14 @@ The app opens at `http://localhost:8501`
 ## 📖 Complete RAG Workflow
 
 ```
-┌─────────────────┐
-│  1. RETRIEVAL   │
-│  • Chunk text   │
-│  • Generate     │
-│    embeddings   │
-│  • Store in     │
-│    ChromaDB     │
-│  • Search       │
-└────────┬────────┘
+┌─────────────────────────┐
+│ 1. INDEXING & RETRIEVAL │
+│  • Chunk text           │
+│  • Generate embeddings  │
+│  • Store in ChromaDB    │
+│  • Query → embed →      │
+│    similarity search    │
+└────────────┬────────────┘
          ↓
 ┌─────────────────┐
 │ 2. AUGMENTATION │
@@ -134,15 +154,16 @@ The app opens at `http://localhost:8501`
 
 ### Embedding Models
 
-| Model                   | Speed  | Accuracy   | Dimensions | Best For           |
-| ----------------------- | ------ | ---------- | ---------- | ------------------ |
-| all-MiniLM-L6-v2        | ⚡⚡⚡ | ⭐⭐⭐     | 384        | General use, fast  |
-| all-mpnet-base-v2       | ⚡⚡   | ⭐⭐⭐⭐⭐ | 768        | High accuracy      |
-| paraphrase-multilingual | ⚡⚡   | ⭐⭐⭐⭐   | 384        | Multiple languages |
+| Model                         | Type  | Speed  | Best For                 |
+| ----------------------------- | ----- | ------ | ------------------------ |
+| all-MiniLM-L6-v2 (Fast)       | Local | ⚡⚡⚡ | General use, no API key  |
+| OpenAI text-embedding-3-small | Cloud | ⚡⚡   | Higher quality, uses API |
+
+Default and other options can be changed in `src/config/settings.py`.
 
 ### LLM Model
 
-- **GPT-4o-mini**: Fast, affordable, high-quality responses
+- **GPT-4.1-mini** (default): Fast, affordable, high-quality responses. Default model, temperature, and system prompt are configurable in `src/config/settings.py`.
 - **Pricing**: ~$0.0001-0.0015 per query (very affordable!)
 
 ## 📊 Observability & Educational Features
@@ -150,6 +171,7 @@ The app opens at `http://localhost:8501`
 Similar to LangSmith, with enhanced educational visualizations:
 
 **RAG Pipeline Transparency:**
+
 - ✅ **Prompt Construction**: Exact system prompt and user message
 - ✅ **Context Injection**: How retrieved chunks are formatted
 - ✅ **Token Usage**: Detailed breakdown of input/output tokens
@@ -158,6 +180,7 @@ Similar to LangSmith, with enhanced educational visualizations:
 - ✅ **Similarity Scores**: Which chunks were most relevant
 
 **Enhanced Visualizations:**
+
 - ✅ **3D Scatter Plot**: Spatial distribution of embeddings
 - ✅ **2D Network Graph**: Semantic relationship networks with clustering
 - ✅ **2D Scatter with Connections**: Combined spatial and relational view
@@ -240,10 +263,12 @@ See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for cloud deployment options (Goo
 ## 💡 Tips for Best Results
 
 **Chunk Size:**
+
 - Smaller (50-100) = more granular, specific queries
 - Larger (200-500) = more context, conceptual queries
 
 **Visualization Mode:**
+
 - Start with **3D Scatter** for overall understanding
 - Use **Network Graph** to discover semantic clusters
 - Try **2D Scatter with Connections** for combined insights
@@ -251,18 +276,20 @@ See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for cloud deployment options (Goo
 - Lower **Similarity Threshold** (0.3-0.4) to see more connections
 
 **System Prompt:**
+
 - Customize for your use case (technical docs, customer support, research)
 - Include instructions for citation and fallback behavior
 
 **Token Management:**
+
 - Reduce retrieved chunks (n_results) to lower costs
 - Use smaller chunk sizes for efficiency
 - Monitor token usage in the Generation section
 
 **Model Selection:**
-- MiniLM for speed and general use
-- mpnet for research and accuracy
-- multilingual for non-English text
+
+- **all-MiniLM-L6-v2**: Local, fast, no API key; good for learning and offline use
+- **OpenAI text-embedding-3-small**: Cloud; use when you want higher-quality embeddings and have an API key
 
 ## 🔧 Troubleshooting
 
@@ -298,17 +325,20 @@ The application includes three powerful visualization modes inspired by advanced
 ### Visualization Modes
 
 **1. 3D Scatter Plot**
+
 - Best for: Overall spatial understanding
 - Shows: Chunks as points in 3D space after dimensionality reduction
 - Use when: You want to see the big picture of how content is distributed
 
 **2. 2D Network Graph** 🌟
+
 - Best for: Discovering semantic clusters and relationships
 - Shows: Chunks as connected nodes with similarity-based edges
 - Use when: You want to find hidden relationships and content groupings
 - Features: Multiple layout algorithms (spring, circular, kamada-kawai)
 
 **3. 2D Scatter with Connections** 🌟
+
 - Best for: Understanding both position and relationships
 - Shows: 2D embedding space with similarity connections
 - Use when: You want to combine spatial distribution with semantic links
@@ -316,6 +346,7 @@ The application includes three powerful visualization modes inspired by advanced
 ### Interactive Controls
 
 All visualizations include educational controls:
+
 - **Semantic Neighbors** (2-10): How many similar chunks to connect
 - **Similarity Threshold** (0.0-1.0): Minimum similarity to show connections
 - **Graph Layout**: Different algorithms reveal different patterns
@@ -325,6 +356,7 @@ All visualizations include educational controls:
 ### Why These Visualizations?
 
 These features were inspired by advanced embedding analysis research but implemented with lightweight, production-ready models (sentence-transformers) to ensure:
+
 - ⚡ Fast performance (~50ms per query)
 - 💾 Low memory usage (~100MB)
 - 🎯 Optimized for educational purposes

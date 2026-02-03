@@ -10,7 +10,7 @@ def render_augmentation_section():
     st.markdown("View how retrieved context is integrated into the prompt sent to the LLM")
     
     if not st.session_state.get('query_results'):
-        st.info("👆 Perform a query in the Retrieval section first to see augmentation")
+        st.info("👆 Perform a query in the Indexing & Retrieval section first to see augmentation")
         return
     
     st.divider()

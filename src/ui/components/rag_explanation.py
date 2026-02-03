@@ -2,6 +2,8 @@
 
 import streamlit as st
 
+RAG_DIAGRAM_URL = "https://raw.githubusercontent.com/mcikalmerdeka/rag-pipeline-visualizer/main/assets/Clearest%20RAG%20Diagram.jpg"
+
 
 def render_rag_explanation():
     """Render RAG explanation section with image and description"""
@@ -11,7 +13,7 @@ def render_rag_explanation():
         
         with col1:
             st.image(
-                "https://raw.githubusercontent.com/mcikalmerdeka/nlp-learning/refs/heads/main/rag-pipeline-visualizer/assets/Clearest%20RAG%20Diagram.jpg",
+                RAG_DIAGRAM_URL,
                 width='stretch',
                 caption="RAG Pipeline Architecture"
             )
@@ -32,10 +34,9 @@ def render_rag_explanation():
             
             ### The Three Pipeline Stages:
             
-            **🔎 1. Retrieval**
-            - Documents are split into chunks
-            - Chunks are converted to vector embeddings
-            - User query is embedded and similar chunks are retrieved
+            **🔎 1. Indexing & Retrieval**
+            - **Indexing** (happens first): Documents are split into chunks → chunks are embedded → vectors stored in a vector database.
+            - **Retrieval**: User query is embedded → similarity search returns the most relevant chunks.
             
             **🔗 2. Augmentation**
             - Retrieved chunks are combined with the user's query

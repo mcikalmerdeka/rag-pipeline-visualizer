@@ -1,7 +1,7 @@
 """RAG Embedding Visualizer - Main Application
 
 A Streamlit application to visualize the complete RAG pipeline:
-Retrieval, Augmentation, and Generation.
+Indexing & Retrieval, Augmentation, and Generation.
 """
 
 import streamlit as st
@@ -43,7 +43,7 @@ def main():
         unsafe_allow_html=True
     )
     st.markdown(
-        '<p class="sub-header">Visualize the complete RAG pipeline: Retrieval → Augmentation → Generation</p>', 
+        '<p class="sub-header">Visualize the complete RAG pipeline: Indexing & Retrieval → Augmentation → Generation</p>', 
         unsafe_allow_html=True
     )
     
@@ -55,9 +55,9 @@ def main():
     
     st.divider()
     
-    # ========== SECTION 1: RETRIEVAL ==========
-    st.header("🔎 1. Retrieval")
-    st.markdown("Generate embeddings, store in vector database, and search for similar chunks")
+    # ========== SECTION 1: INDEXING & RETRIEVAL ==========
+    st.header("🔎 1. Indexing & Retrieval")
+    st.markdown("**Indexing:** Chunk text → embed → store in vector DB. **Retrieval:** Embed query → search for similar chunks.")
     
     # Main content area
     col1, col2 = st.columns([1, 1])
