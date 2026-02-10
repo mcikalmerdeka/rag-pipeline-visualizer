@@ -5,7 +5,7 @@ Indexing & Retrieval, Augmentation, and Generation.
 """
 
 import streamlit as st
-from src.config import setup_logger
+from src.config.logging_config import setup_logger
 from src.core import initialize_session_state
 from src.ui import CUSTOM_CSS
 from src.ui.components import (
