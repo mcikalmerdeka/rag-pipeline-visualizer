@@ -55,6 +55,7 @@ models/
 
 # Logs
 *.log
+logs/
 
 # Environment variables
 .env

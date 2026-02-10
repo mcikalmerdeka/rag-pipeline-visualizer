@@ -1,6 +1,7 @@
 """Session state initialization"""
 
 import streamlit as st
+from src.config import logger_core
 
 
 def initialize_session_state():
@@ -40,6 +41,7 @@ def initialize_session_state():
 
 def reset_embeddings_state():
     """Reset all embedding-related state when model changes"""
+    logger_core.info("Resetting embedding-related session state")
     st.session_state.embeddings_generated = False
     st.session_state.collection = None
     st.session_state.chunks = []

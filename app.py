@@ -5,6 +5,7 @@ Indexing & Retrieval, Augmentation, and Generation.
 """
 
 import streamlit as st
+from src.config import setup_logger
 from src.core import initialize_session_state
 from src.ui import CUSTOM_CSS
 from src.ui.components import (
@@ -18,6 +19,9 @@ from src.ui.components import (
     render_generation_section,
     render_rag_explanation
 )
+
+# Setup application logger - this initializes handlers at startup
+logger = setup_logger("rag_visualizer")
 
 
 # Page config

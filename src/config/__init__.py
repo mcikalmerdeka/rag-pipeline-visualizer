@@ -12,6 +12,16 @@ from .settings import (
     DEFAULT_TEMPERATURE,
     DEFAULT_SYSTEM_PROMPT,
 )
+from .logging_config import (
+    setup_logger,
+    get_logger,
+    logger_core,
+    logger_vector,
+    logger_llm,
+    logger_text,
+    logger_ui,
+    logger_viz,
+)
 
 __all__ = [
     'MODEL_OPTIONS',
@@ -24,5 +34,13 @@ __all__ = [
     'DEFAULT_MODEL',
     'DEFAULT_TEMPERATURE',
     'DEFAULT_SYSTEM_PROMPT',
+    'setup_logger',
+    'get_logger',
+    'logger_core',
+    'logger_vector',
+    'logger_llm',
+    'logger_text',
+    'logger_ui',
+    'logger_viz',
 ]
 

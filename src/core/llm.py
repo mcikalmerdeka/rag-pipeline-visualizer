@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from src.config import DEFAULT_MODEL, DEFAULT_TEMPERATURE, DEFAULT_SYSTEM_PROMPT
+from src.config import DEFAULT_MODEL, DEFAULT_TEMPERATURE, DEFAULT_SYSTEM_PROMPT, logger_llm
 
 # Load environment variables (for local development)
 load_dotenv()
@@ -118,6 +118,9 @@ def generate_response(query: str, retrieved_chunks: List[str], system_prompt: st
     """
     if model is None:
         model = DEFAULT_MODEL
+    
+    logger_llm.info(f"Generating response with model: {model}, chunks: {len(retrieved_chunks)}")
+    
     llm = get_llm(model=model, temperature=DEFAULT_TEMPERATURE)
     
     # Construct augmented prompt
@@ -130,7 +133,13 @@ def generate_response(query: str, retrieved_chunks: List[str], system_prompt: st
     ]
     
     # Call LangChain OpenAI
-    response = llm.invoke(messages)
+    logger_llm.debug(f"Sending request to LLM with {prompt_data['num_chunks']} context chunks")
+    try:
+        response = llm.invoke(messages)
+        logger_llm.info("Successfully received LLM response")
+    except Exception as e:
+        logger_llm.error(f"Error generating LLM response: {str(e)}")
+        raise
     
     # Extract usage information from response metadata
     usage_metadata = response.response_metadata.get('token_usage', {})

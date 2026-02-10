@@ -3,6 +3,7 @@
 import re
 from typing import List
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from src.config import logger_text
 
 
 def clean_markdown_text(text: str) -> str:
@@ -66,9 +67,12 @@ def chunk_text(text: str, chunk_size: int = 100, overlap: int = 20, clean_markdo
     Returns:
         List of text chunks
     """
+    logger_text.info(f"Chunking text: size={chunk_size}, overlap={overlap}, clean_markdown={clean_markdown}")
+    
     # Clean markdown if requested
     if clean_markdown:
         text = clean_markdown_text(text)
+        logger_text.debug("Markdown formatting cleaned")
     
     # Convert word-based sizes to character-based (avg ~5 chars per word + space)
     char_chunk_size = chunk_size * 6
@@ -87,5 +91,6 @@ def chunk_text(text: str, chunk_size: int = 100, overlap: int = 20, clean_markdo
     # Final cleanup: remove any empty or whitespace-only chunks
     chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
     
+    logger_text.info(f"Text chunked into {len(chunks)} chunks")
     return chunks
 
