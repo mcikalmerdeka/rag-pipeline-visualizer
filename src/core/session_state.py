@@ -15,6 +15,8 @@ def initialize_session_state():
         st.session_state.chunks = []
     if 'embeddings' not in st.session_state:
         st.session_state.embeddings = []
+    if 'chunk_metadatas' not in st.session_state:
+        st.session_state.chunk_metadatas = []
     if 'query_results' not in st.session_state:
         st.session_state.query_results = None
     if 'query_embedding' not in st.session_state:
@@ -23,6 +25,8 @@ def initialize_session_state():
         st.session_state.last_query = ""
     if 'current_model' not in st.session_state:
         st.session_state.current_model = None
+    if 'document_sources' not in st.session_state:
+        st.session_state.document_sources = []
     
     # Augmentation section
     if 'augmented_prompt' not in st.session_state:
@@ -46,9 +50,11 @@ def reset_embeddings_state():
     st.session_state.collection = None
     st.session_state.chunks = []
     st.session_state.embeddings = []
+    st.session_state.chunk_metadatas = []
     st.session_state.query_results = None
     st.session_state.query_embedding = None
     st.session_state.last_query = ""
+    st.session_state.document_sources = []
     st.session_state.augmented_prompt = None
     st.session_state.ready_for_generation = False
     st.session_state.llm_response = None

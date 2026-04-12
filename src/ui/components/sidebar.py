@@ -52,9 +52,14 @@ def render_sidebar():
         # Sample texts
         st.subheader("📚 Sample Texts")
         sample_choice = st.selectbox("Choose sample:", list(SAMPLE_TEXTS.keys()))
-        
+
         if st.button("Load Sample", use_container_width=True):
             st.session_state.sample_text = SAMPLE_TEXTS[sample_choice]
+            # Mark as sample text for metadata tracking
+            st.session_state.current_uploaded_file = {
+                'name': f'{sample_choice.replace(" ", "_")}.txt',
+                'file_type': 'TEXT'
+            }
             st.rerun()
     
     return model_name, chunk_size, overlap, reduction_method, collection_name

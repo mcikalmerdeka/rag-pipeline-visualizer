@@ -42,6 +42,22 @@ SAMPLE_TEXTS = {
     "LangGraph Framework": load_sample_text("LangGraph_Overview.txt")
 }
 
+# Supported file types for document processing
+SUPPORTED_FILE_TYPES = {
+    'pdf': ['pdf'],
+    'word': ['docx', 'doc'],
+    'image': ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'webp'],
+    'text': ['txt']
+}
+
+# All supported extensions for file uploader
+ALL_SUPPORTED_EXTENSIONS = (
+    SUPPORTED_FILE_TYPES['pdf'] +
+    SUPPORTED_FILE_TYPES['word'] +
+    SUPPORTED_FILE_TYPES['image'] +
+    SUPPORTED_FILE_TYPES['text']
+)
+
 # Default values for the RAG pipeline
 DEFAULT_CHUNK_SIZE = 100
 DEFAULT_OVERLAP = 20

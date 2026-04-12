@@ -11,6 +11,8 @@ from .settings import (
     DEFAULT_MODEL,
     DEFAULT_TEMPERATURE,
     DEFAULT_SYSTEM_PROMPT,
+    SUPPORTED_FILE_TYPES,
+    ALL_SUPPORTED_EXTENSIONS,
 )
 from .logging_config import (
     setup_logger,
@@ -34,6 +36,8 @@ __all__ = [
     'DEFAULT_MODEL',
     'DEFAULT_TEMPERATURE',
     'DEFAULT_SYSTEM_PROMPT',
+    'SUPPORTED_FILE_TYPES',
+    'ALL_SUPPORTED_EXTENSIONS',
     'setup_logger',
     'get_logger',
     'logger_core',

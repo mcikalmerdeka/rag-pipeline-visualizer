@@ -6,7 +6,7 @@ services:
       - "8501:8501"
     environment:
       - STREAMLIT_SERVER_HEADLESS=true
-      - STREAMLIT_SERVER_ENABLE_CORS=false
+      - STREAMLIT_SERVER_ENABLE_CORS=true
       - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=true
     # volumes:
     #   # Optional: Mount local directory for development
@@ -18,4 +18,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
